@@ -1,0 +1,12 @@
+#!/usr/bin/python2.7
+#-*- coding: utf-8 -*-
+
+
+import os, sys, time
+hostname = "border-sc-1.vektor.net"
+response = os.system("ping -c 1 " + hostname + " >/dev/null 2>&1")
+
+if response == 0:
+	print "dead"
+else:
+	print "alive"

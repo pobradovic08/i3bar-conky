@@ -2,12 +2,14 @@
 #-*- coding: utf-8 -*-
 
 import dnslib
-import sys
+import sys, subprocess
 import dns.resolver
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 nameservers = ['109.122.98.114', '109.122.98.115', '109.122.98.119', '109.122.98.6']
+
+string = ""
 
 for server in nameservers:
 	try:
@@ -16,7 +18,10 @@ for server in nameservers:
 		resolver.lifetime = 2.0
 		resolver.nameservers = [server]
 		answer = resolver.query('google.com')
-		print 'ok'
+		string += "<span color='#baffba'>●</span>"
 	except Exception as e:
-		print ':('
+		string += "<span color='#ff0000'>●</span>"
+		subprocess.Popen(['notify-send', '-u', 'critical', '-a', 'i3-conky-monitor', "DNS down", "Couldn't query %s server" % server])
 		continue
+
+print string

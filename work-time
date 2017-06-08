@@ -1,0 +1,34 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+
+"""
+Script showing how much hours of work is left today
+"""
+
+import sys
+import datetime
+import math
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+work = {
+    'start': {
+        'hour': 10,
+        'minute': 0
+    },
+    'duration': 8
+}
+
+today = datetime.datetime.today()
+start = today.replace(hour=work['start']['hour'], minute=work['start']['minute'], second=0, microsecond=0)
+finish = start + datetime.timedelta(hours=work['duration'])
+
+if today < start:
+    print '○○○○○○○○'
+elif today >= start:
+    if today <= finish:
+        dots = (8*(today-start).total_seconds())/(work['duration']*3600)
+        print '●' * int(math.floor(dots)) + '○' * int(8-math.floor(dots))
+    else:
+        print '●●●●●●●●'

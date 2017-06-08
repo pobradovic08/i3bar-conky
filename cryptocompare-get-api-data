@@ -3,7 +3,11 @@
 import urllib, json
 from os.path import expanduser
 
-url = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,XMR,XRP,ZEC&tsyms=USD&e=Bitfinex"
+from_currencies = ['BTC', 'ETH', 'XMR', 'XRP', 'ZEC']
+to_currencies = ['USD']
+
+base_url = "https://min-api.cryptocompare.com/data/pricemulti"
+url = base_url + "?fsyms=" + ','.join(from_currencies) + "&tsyms=" + ','.join(to_currencies) + "&e=Bitfinex"
 
 # Part one - Get current (old) data from file
 try:

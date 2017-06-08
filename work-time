@@ -12,6 +12,10 @@ import math
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+
+def lvmap(value, x_start, x_end, u_start, u_end):
+    return u_start + ((u_end-u_start) * ((value-x_start)/(x_end-x_start)))
+
 work = {
     'start': {
         'hour': 10,
@@ -28,7 +32,26 @@ if today < start:
     print '○○○○○○○○'
 elif today >= start:
     if today <= finish:
-        dots = (8*(today-start).total_seconds())/(work['duration']*3600)
-        print '●' * int(math.floor(dots)) + '○' * int(8-math.floor(dots))
+        work_done = lvmap((today-start).total_seconds(), 0, 8*3600, 0, 8)
+        dots = int(math.floor(work_done))
+        reminder = work_done % 1
+
+        return_string = ""
+        #Completed dots
+        return_string += "<span color='#00ff00'>%s</span>" % (
+            '●' * dots,
+        )
+        # Current dot
+        # Change color from white to green depending on how much time passed
+        # G value is always 255, R and B values change from 255 to 0 by mapping reminder to [0,255]
+        reminder_color = "{0:02x}".format(255-int(lvmap(reminder, 0, 1, 0, 255)))
+        return_string += "<span color='#%sff%s'>%s</span>" % (
+            reminder_color, reminder_color, '●'
+        )
+        # Empty dots
+        return_string += "<span>%s</span>" % (
+            '○' * (8 - (dots+1))
+        )
+        print return_string
     else:
-        print '●●●●●●●●'
+        print '<span color=\'#00ff00\'>●●●●●●●●</span>'

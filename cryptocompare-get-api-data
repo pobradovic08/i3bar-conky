@@ -1,0 +1,32 @@
+#!/usr/bin/python2.7
+
+import urllib, json
+from os.path import expanduser
+
+url = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,XMR,XRP,ZEC&tsyms=USD&e=Bitfinex"
+
+# Part one - Get current (old) data from file
+try:
+	data_file = open(expanduser('~/.cryptocompare-last'), 'r')
+	data = json.loads(data_file.read())
+
+except Exception:
+	data = {
+		'old': {},
+		'new': {}
+	}
+
+
+try:
+	response = urllib.urlopen(url)
+	api_response = json.loads(response.read())
+
+	data_file = open(expanduser('~/.cryptocompare-last'), 'w+')
+	data['old'] = data['new']
+	data['new'] = api_response
+
+	data_file.write(json.dumps(data))
+	data_file.close()
+
+except Exception:
+	exit(1)

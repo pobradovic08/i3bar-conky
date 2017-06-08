@@ -1,0 +1,22 @@
+#!/usr/bin/python2.7
+#-*- coding: utf-8 -*-
+
+import dnslib
+import sys
+import dns.resolver
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+nameservers = ['109.122.98.114', '109.122.98.115', '109.122.98.119', '109.122.98.6']
+
+for server in nameservers:
+	try:
+		resolver = dns.resolver.Resolver()
+		resolver.timeout = 1.0
+		resolver.lifetime = 2.0
+		resolver.nameservers = [server]
+		answer = resolver.query('google.com')
+		print 'ok'
+	except Exception as e:
+		print ':('
+		continue

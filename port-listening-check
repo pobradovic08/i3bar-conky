@@ -1,29 +1,35 @@
 #!/usr/bin/python2.7
 #-*- coding: utf-8 -*-
 
-import os, sys, subprocess, shlex
+import os, sys
+import subprocess, shlex
+import re
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 services = {
-    'ssh': "\ 0.0.0.0:22\ "
+    'ssh': " 0.0.0.0:22 ",
+    'vnc': " 0.0.0.0:5900 ",
 }
 
 string = ""
 
-if len(sys.argv) == 2:
-    with open(os.devnull, 'wb') as devnull:
-        proc_list = subprocess.Popen(shlex.split('netstat -tulpn'), stdout=subprocess.PIPE, stderr=devnull)
-        grep = subprocess.Popen(shlex.split('grep "%s"' % services[sys.argv[1]]), stdin=proc_list.stdout,
-                                 stdout=devnull, stderr=subprocess.STDOUT)
-        proc_list.stdout.close()
-        out,err = grep.communicate()
-        response = grep.returncode
-        #response = os.system("netstat -tulpn | grep '" + sys.argv[1] + "' >/dev/null 2>&1")
-        if response == 0:
-            string += "<span color='#baffba'>%s</span>" % sys.argv[1].upper()
+with open(os.devnull, 'wb') as devnull:
+    proc_list = subprocess.Popen(shlex.split('netstat -tulpn'), stdout=subprocess.PIPE, stderr=devnull)
+    proc_list_output = proc_list.communicate()[0]
+
+    for service, match in services.iteritems():
+        running = False
+        compiled = re.compile(re.escape(match))
+        for line in proc_list_output.split("\n"):
+            if compiled.search(line):
+                running = True
+                break
+
+        if running:
+            string += "<span color='#baffba'>%s</span>  " % service.upper()
         else:
-            string += "<span color='#ff0000'>%s</span>" % sys.argv[1].upper()
+            string += "<span color='#ff0000'>%s</span>  " % service.upper()
 
 print string

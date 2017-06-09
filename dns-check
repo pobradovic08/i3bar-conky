@@ -1,5 +1,5 @@
 #!/usr/bin/python2.7
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import dnslib
 import sys, subprocess
@@ -12,16 +12,21 @@ nameservers = ['109.122.98.114', '109.122.98.115', '109.122.98.119', '109.122.98
 string = ""
 
 for server in nameservers:
-	try:
-		resolver = dns.resolver.Resolver()
-		resolver.timeout = 1.0
-		resolver.lifetime = 2.0
-		resolver.nameservers = [server]
-		answer = resolver.query('google.com')
-		string += "<span color='#baffba'>●</span>"
-	except Exception as e:
-		string += "<span color='#ff0000'>●</span>"
-		subprocess.Popen(['notify-send', '-u', 'critical', '-a', 'i3-conky-monitor', "DNS down", "Couldn't query %s server" % server])
-		continue
+    try:
+        resolver = dns.resolver.Resolver()
+        resolver.timeout = 1.0
+        resolver.lifetime = 2.0
+        resolver.nameservers = [server]
+        answer = resolver.query('google.com')
+        string += "<span color='#baffba'>●</span>"
+    except Exception as e:
+        string += "<span color='#ff0000'>●</span>"
+        subprocess.Popen(
+            ['notify-send',
+             '-u', 'critical',
+             '-a', 'i3-conky-monitor',
+             "DNS down", "Couldn't query %s server" % server
+             ])
+        continue
 
 print string

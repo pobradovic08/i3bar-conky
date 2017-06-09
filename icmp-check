@@ -1,12 +1,29 @@
 #!/usr/bin/python2.7
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+
+import os, sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+hostnames = [
+    '109.122.96.1',
+    'core-sc-1.vektor.net',
+    'border-sc-1.vektor.net',
+    'l3-gs-1.vektor.net',
+    'core-bo-1.vektor.net',
+    'core-ob-1.vektor.net'
+]
+
+string = ""
 
 
-import os, sys, time
-hostname = "border-sc-1.vektor.net"
-response = os.system("ping -c 1 " + hostname + " >/dev/null 2>&1")
+for host in hostnames:
+    response = os.system("ping -c 1 " + host + " >/dev/null 2>&1")
 
-if response == 0:
-	print "dead"
-else:
-	print "alive"
+    if response == 0:
+        string += "<span color='#baffba'>●</span>"
+    else:
+        string += "<span color='#ff0000'>●</span>"
+
+print string

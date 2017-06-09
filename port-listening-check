@@ -8,28 +8,35 @@ import re
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+# Define services and what to match
+# Key will be displayed to output
+# Value will be escaped and used for regexp matching
 services = {
     'ssh': " 0.0.0.0:22 ",
     'vnc': " 0.0.0.0:5900 ",
 }
 
-string = ""
+# Output array
+output = []
 
+# /dev/null for stderr output
 with open(os.devnull, 'wb') as devnull:
     proc_list = subprocess.Popen(shlex.split('netstat -tulpn'), stdout=subprocess.PIPE, stderr=devnull)
     proc_list_output = proc_list.communicate()[0]
 
+    # Go trough the list of services and match each line from netstat output
     for service, match in services.iteritems():
         running = False
         compiled = re.compile(re.escape(match))
         for line in proc_list_output.split("\n"):
             if compiled.search(line):
+                # If the line matches, service is running
                 running = True
                 break
 
         if running:
-            string += "<span color='#baffba'>%s</span>  " % service.upper()
+            output.append("<span color='#baffba'>%s</span>" % service.upper())
         else:
-            string += "<span color='#ff0000'>%s</span>  " % service.upper()
+            output.append("<span color='#ff0000'>%s</span>" % service.upper())
 
-print string
+print '  '.join(output)

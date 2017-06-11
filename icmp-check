@@ -13,7 +13,8 @@ hostnames = [
     'l3-gs-1.vektor.net',
     'core-bo-1.vektor.net',
     'core-ob-1.vektor.net',
-    'edge-ba-1.vektor.net'
+    'edge-ba-1.vektor.net',
+    'pajaja.aur.co.rs'
 ]
 
 string = ""

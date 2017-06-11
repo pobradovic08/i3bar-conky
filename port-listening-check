@@ -14,6 +14,7 @@ sys.setdefaultencoding('utf8')
 services = {
     'ssh': " 0.0.0.0:22 ",
     'vnc': " 0.0.0.0:5900 ",
+    'mysql': " 0.0.0.0:3306 "
 }
 
 # Output array

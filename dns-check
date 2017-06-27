@@ -1,26 +1,51 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
+#
+# DNS Check
+# Check if DNS servers resolve queries
+#
+# Copyright (C) 2017  Pavle Obradovic (pajaja)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import dnslib
 import sys, subprocess
 import dns.resolver
 
 reload(sys)
 sys.setdefaultencoding('utf8')
+
+# Nameservers to check
 nameservers = ['109.122.98.114', '109.122.98.115', '109.122.98.119', '109.122.98.6']
 
 string = ""
 
+# Query each NS server in nameserver list for google.com
 for server in nameservers:
     try:
+        # Setup resolver timeouts and to use just one nameserver
         resolver = dns.resolver.Resolver()
         resolver.timeout = 1.0
         resolver.lifetime = 2.0
         resolver.nameservers = [server]
+        # Get answer for google.com
         answer = resolver.query('google.com')
         string += "<span color='#baffba'>●</span>"
+
+    # If exception is raised NS server could be offline
     except Exception as e:
         string += "<span color='#ff0000'>●</span>"
+        # Send critical notification
         subprocess.Popen(
             ['notify-send',
              '-u', 'critical',
@@ -29,4 +54,5 @@ for server in nameservers:
              ])
         continue
 
+# Print string containing dots that represent NS servers for conky
 print string

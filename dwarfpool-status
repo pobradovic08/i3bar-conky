@@ -1,0 +1,52 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+
+import sys
+import urllib
+import json
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+string = ""
+
+wallet = sys.argv[1]
+email = sys.argv[2]
+api_url = "http://dwarfpool.com/eth/api?wallet=%s&email=%s" % (wallet, email)
+
+response = urllib.urlopen(api_url)
+data = json.loads(response.read())
+if 'error' in data and data['error']:
+    string += "<span color='#ff0000'>API ERROR</span>"
+else:
+    total_hashrate = data['total_hashrate']
+    total_hashrate_calculated = data['total_hashrate_calculated']
+    if total_hashrate_calculated >= (total_hashrate - (0.15 * total_hashrate)):
+        total_color = "#baffba"
+    else:
+        total_color = "#ffbaba"
+
+    if 'workers' in data:
+        worker_array = []
+        for worker in data['workers']:
+            try:
+                alive = data['workers'][worker]['alive']
+                hashrate = data['workers'][worker]['hashrate']
+                hashrate_calculated = data['workers'][worker]['hashrate_calculated']
+                last_contact = data['workers'][worker]['second_since_submit']
+
+                if not alive and last_contact > 900:
+                    str_color = "#ff0000"
+                elif hashrate_calculated >= (hashrate - (0.15 * hashrate)):
+                    str_color = "#baffba"
+                else:
+                    str_color = "#ffbaba"
+
+                worker_array.append("<span color='%s'>●</span>" % str_color)
+            except KeyError:
+                continue
+        string += ''.join(worker_array)
+    string += " <span color='%s'><b>%s</b>MHs</span> / <b>%s</b>MHs" % (
+        total_color, total_hashrate_calculated, total_hashrate
+    )
+print string

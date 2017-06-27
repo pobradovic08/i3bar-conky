@@ -1,5 +1,22 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
+#
+# Dwarfpool status
+#
+# Copyright (C) 2017  Pavle Obradovic (pajaja)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 import urllib
@@ -8,26 +25,35 @@ import json
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+# String that will be printed for conky
 string = ""
 
+# Ethereum wallet
 wallet = sys.argv[1]
+# Monitor email (used as API key)
 email = sys.argv[2]
+# Dwarfpool API URL
 api_url = "http://dwarfpool.com/eth/api?wallet=%s&email=%s" % (wallet, email)
 
+# Fetch JSON from API
 response = urllib.urlopen(api_url)
 data = json.loads(response.read())
+
+# On error display general message
 if 'error' in data and data['error']:
     string += "<span color='#ff0000'>API ERROR</span>"
 else:
     total_hashrate = data['total_hashrate']
     total_hashrate_calculated = data['total_hashrate_calculated']
+
+    # Allow 15% lower calculated hashrate before marking it as problematic
     if total_hashrate_calculated >= (total_hashrate - (0.15 * total_hashrate)):
         total_color = "#baffba"
     else:
         total_color = "#ffbaba"
 
     if 'workers' in data:
-        worker_array = []
+        # For each worker display only a dot of appropriate color
         for worker in data['workers']:
             try:
                 alive = data['workers'][worker]['alive']
@@ -35,18 +61,23 @@ else:
                 hashrate_calculated = data['workers'][worker]['hashrate_calculated']
                 last_contact = data['workers'][worker]['second_since_submit']
 
+                # API often reports miner as dead.
+                # Trust this only if the last communication was over 15 minutes ago
                 if not alive and last_contact > 900:
                     str_color = "#ff0000"
+
+                # Allow 15% lower calculated hashrate before marking it as problematic
                 elif hashrate_calculated >= (hashrate - (0.15 * hashrate)):
                     str_color = "#baffba"
                 else:
                     str_color = "#ffbaba"
 
-                worker_array.append("<span color='%s'>●</span>" % str_color)
+                string += "<span color='%s'>●</span>" % str_color
             except KeyError:
                 continue
-        string += ''.join(worker_array)
+    # Display info about calculated and reported hashrate
     string += " <span color='%s'><b>%s</b>MHs</span> / <b>%s</b>MHs" % (
         total_color, total_hashrate_calculated, total_hashrate
     )
+
 print string

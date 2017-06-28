@@ -1,9 +1,23 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
-
-"""
-Script showing how much hours of work is left today
-"""
+#
+# Work time
+# Script showing how much hours of work is left for today
+#
+# Copyright (C) 2017  Pavle Obradovic (pajaja)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 import datetime
@@ -14,8 +28,18 @@ sys.setdefaultencoding('utf8')
 
 
 def lvmap(value, x_start, x_end, u_start, u_end):
+    """
+    Linear vector mapping
+    :param value:  Original value in [x_start, x_end] range
+    :param x_start: Original range start
+    :param x_end: Original range end
+    :param u_start: Mapped range start
+    :param u_end: Mapped range end
+    :return: Mapped value in range [u_start, u_end]
+    """
     return u_start + ((u_end-u_start) * ((value-x_start)/(x_end-x_start)))
 
+# Define work duration and start time
 work = {
     'start': {
         'hour': 10,
@@ -24,16 +48,25 @@ work = {
     'duration': 8
 }
 
+# Build start and finish times
 today = datetime.datetime.today()
 start = today.replace(hour=work['start']['hour'], minute=work['start']['minute'], second=0, microsecond=0)
 finish = start + datetime.timedelta(hours=work['duration'])
 
+
+# Before start
 if today < start:
     print '○○○○○○○○'
+# After start
 elif today >= start:
+    # In [start, end] range
     if today <= finish:
+
+        # Mapp working hours to (0,8) range
         work_done = lvmap((today-start).total_seconds(), 0, 8*3600, 0, 8)
+        # Number of full dots
         dots = int(math.floor(work_done))
+        # Reminder (0, 1), basically work_done - dots
         reminder = work_done % 1
 
         return_string = ""
@@ -53,5 +86,6 @@ elif today >= start:
             '○' * (8 - (dots+1))
         )
         print return_string
+    # After hours
     else:
         print '<span color=\'#00ff00\'>●●●●●●●●</span>'

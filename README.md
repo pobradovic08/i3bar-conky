@@ -34,4 +34,4 @@ Checks if devices responds to ICMP requests. List of hostnames (or IP addresses)
 
 #### Port listening check
 Checks if localhost listens for specific services. Services to be checked are defined in the script itself.
-Script parses `netstat` output and tries to find services defined.
+Script parses `netstat` output and tries to find services defined. Default checks Bacula, VNC, SSH, DNS and MySQL.

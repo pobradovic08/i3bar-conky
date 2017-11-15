@@ -34,7 +34,9 @@ sys.setdefaultencoding('utf8')
 services = {
     'ssh': " 0.0.0.0:22 ",
     'vnc': " 0.0.0.0:5900 ",
-    'mysql': " 0.0.0.0:3306 "
+    'mysql': " 0.0.0.0:3306 ",
+    'dns': " 127.0.0.1:53 ",
+    'bacula': " 0.0.0.0:9102 "
 }
 
 # Output array

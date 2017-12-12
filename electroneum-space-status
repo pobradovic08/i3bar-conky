@@ -44,7 +44,7 @@ if 'error' in data and data['error']:
 else:
     color = "#baffba"
     # Balance and hashrate from the pool
-    balance = data["stats"]["balance"]
+    balance = float(data["stats"]["balance"])/100
     hashrate = data["stats"]["hashrate"]
     time_last_share = int(data["stats"]["lastShare"])
     # Time difference
@@ -55,8 +55,8 @@ else:
     else:
         color = "#ff0000"
     # Display info about calculated and reported hashrate
-    string += "<b>%s</b>ETN / <span color='%s'><b>%s</b></span>" % (
-        color, balance, hashrate
+    string += "<b>%.2f</b> ETN / <span color='%s'><b>%s</b></span>" % (
+        balance, color,  hashrate
     )
 
 print string

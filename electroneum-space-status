@@ -1,0 +1,62 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Dwarfpool status
+#
+# Copyright (C) 2017  Pavle Obradovic (pajaja)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import sys
+import urllib
+import json
+import time
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+# String that will be printed for conky
+string = ""
+
+# Ethereum wallet
+wallet = sys.argv[1]
+# Dwarfpool API URL
+api_url = "http://api.electroneum.space/v1/stats/address/%s" % (wallet)
+
+# Fetch JSON from API
+response = urllib.urlopen(api_url)
+data = json.loads(response.read())
+
+# On error display general message
+if 'error' in data and data['error']:
+    string += "<span color='#ff0000'>API ERROR</span>"
+else:
+    color = "#baffba"
+    # Balance and hashrate from the pool
+    balance = data["stats"]["balance"]
+    hashrate = data["stats"]["hashrate"]
+    time_last_share = int(data["stats"]["lastShare"])
+    # Time difference
+    time_now = int(time.time())
+    time_delta = time_now - time_last_share
+    if time_delta < 300:
+        color = "#baffba"
+    else:
+        color = "#ff0000"
+    # Display info about calculated and reported hashrate
+    string += "<b>%s</b>ETN / <span color='%s'><b>%s</b></span>" % (
+        color, balance, hashrate
+    )
+
+print string

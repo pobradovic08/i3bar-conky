@@ -32,7 +32,7 @@ string = ""
 # Ethereum wallet
 wallet = sys.argv[1]
 # Spacepools ETN API URL
-api_url = "http://api.etn.spacepools.org/v1/stats/address/%s" % (wallet)
+api_url = "https://api.etn.spacepools.org/v1/stats/address/%s" % (wallet)
 
 # Fetch JSON from API
 response = urllib.urlopen(api_url)
